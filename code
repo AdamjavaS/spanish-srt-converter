@@ -1,0 +1,37 @@
+import pysrt
+from googletrans import Translator
+
+def translate_subtitles(subtitles):
+    translator = Translator()
+    for subtitle in subtitles:
+        translated_subtitle = translator.translate(subtitle.text, src='en', dest='es')
+        subtitle.text = translated_subtitle.text
+    return subtitles
+
+def merge_subtitles(original_subtitles, translated_subtitles):
+    merged_subtitles = original_subtitles
+    for i in range(len(merged_subtitles)):
+        # Combine the original and translated subtitle texts
+        merged_subtitles[i].text += f"\n{translated_subtitles[i].text}"
+    return merged_subtitles
+
+def main():
+    try:
+        # Open the original English subtitles
+        original_subtitles = pysrt.open("original_subtitles.srt")
+
+        # Translate the subtitles to Spanish
+        translated_subtitles = translate_subtitles(original_subtitles)
+
+        # Merge the original and translated subtitles
+        dual_subtitles = merge_subtitles(original_subtitles, translated_subtitles)
+
+        # Save the dual subtitles to a new file
+        dual_subtitles.save("dual_subtitles.srt", encoding='utf-8')
+        
+        print("Dual subtitles generated successfully!")
+    except Exception as e:
+        print("An error occurred:", e)
+
+if __name__ == "__main__":
+    main()
